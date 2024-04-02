@@ -22,7 +22,7 @@ class HotelDetailsScreen extends StatefulWidget {
 class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
   bool _isExpanded = false;
   int selectedIndex = 0;
-  List openingHours = [];
+
   Future<void> openMap(double latitude, double longitude) async {
     String googleUrl =
         'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
@@ -35,6 +35,16 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var dropDownValue;
+    List openingHours = [
+      "Monday: ${widget.restaurant.operatingHours.monday}",
+      "Tuesday: ${widget.restaurant.operatingHours.tuesday}",
+      "Wednesday: ${widget.restaurant.operatingHours.wednesday}",
+      "Thursday: ${widget.restaurant.operatingHours.thursday}",
+      "Friday: ${widget.restaurant.operatingHours.friday}",
+      "Saturday: ${widget.restaurant.operatingHours.saturday}",
+      "Sunday: ${widget.restaurant.operatingHours.sunday}",
+    ];
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       floatingActionButton: FloatingActionButton(
@@ -206,18 +216,27 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
                       SizedBox(
                         width: width * .02,
                       ),
-                      // DropdownButton(
-                      //   items: openingHours.map<DropdownMenuItem<String>((String value) {
-                      //     return DropdownMenuItem(
-                      //       child: widget.restaurant.operatingHours.
-                      //       )
-                      //   }),
-                      //   onChanged: onChanged
-                      //   )
-                      Text(
-                        "Wednesday : 5:30pm - 12:00am ",
-                        style: TextStyle(fontSize: width * .04),
+                      DropdownButton(
+                        isExpanded: true,
+                        value: dropDownValue,
+                        items: openingHours.map((value) {
+                          return DropdownMenuItem(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: width * .04),
+                              ));
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {});
+                          dropDownValue = value;
+                        },
                       )
+                      // Text(
+                      //   "Wednesday : 5:30pm - 12:00am ",
+                      //   style: TextStyle(fontSize: width * .04),
+                      // )
                     ],
                   )
                 ],
