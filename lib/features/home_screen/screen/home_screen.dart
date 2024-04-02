@@ -1,0 +1,250 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:the_grand_marche/core/common/error_text.dart';
+import 'package:the_grand_marche/core/common/loader.dart';
+import 'package:the_grand_marche/core/constants/colors/palletes.dart';
+import 'package:the_grand_marche/core/constants/pictures/pictures.dart';
+import 'package:the_grand_marche/features/details_screen/details_screen.dart';
+import 'package:the_grand_marche/features/home_screen/controller/home_screen_controller.dart';
+import 'package:the_grand_marche/main.dart';
+
+class HomeScreen extends ConsumerStatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  var totalRating;
+  var rating;
+  List ratingsList = [];
+  List hotelImages = [
+    Pictures.restaurant1,
+    Pictures.restaurant2,
+    Pictures.restaurant3,
+    Pictures.restaurant4,
+    Pictures.restaurant5,
+    Pictures.restaurant6,
+    Pictures.restaurant7,
+    Pictures.restaurant8,
+    Pictures.restaurant9,
+    Pictures.restaurant10,
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey.shade100,
+      appBar: AppBar(
+        backgroundColor: Pallets.orange,
+        foregroundColor: Colors.white,
+        title: Text(
+          "RESTAURANTS",
+          style: TextStyle(fontSize: width * .045, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          Row(
+            children: [
+              const Icon(
+                Icons.logout,
+                color: Colors.white,
+              ),
+              Text(
+                "Log out",
+                style: TextStyle(fontSize: width * .04, color: Colors.white),
+              ),
+            ],
+          ),
+          SizedBox(
+            width: width * .03,
+          )
+        ],
+      ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: EdgeInsets.only(
+              top: width * .02, left: width * .01, right: width * .01),
+          child: SizedBox(
+            width: width,
+            child: Column(
+              children: [
+                ref.watch(fetchRestoProvider).when(
+                      data: (data) {
+                        print(data.restaurants.length);
+                        return ListView.separated(
+                          physics: const BouncingScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: data.restaurants.length,
+                          itemBuilder: (context, index) {
+                            for (int j = 0; j < data.restaurants.length; j++) {
+                              totalRating = 0;
+                              for (int i = 0;
+                                  i < data.restaurants[index].reviews.length;
+                                  i++) {
+                                totalRating = totalRating +
+                                    data.restaurants[i].reviews[i].rating;
+                                print(totalRating);
+                                print(data.restaurants[i].reviews.length);
+
+                                print(rating);
+                              }
+                              rating = totalRating /
+                                  data.restaurants[j].reviews.length;
+                              ratingsList.add(rating);
+                              print(ratingsList);
+                            }
+
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => HotelDetailsScreen(
+                                        restaurant: data.restaurants[index],
+                                        hotelImage: hotelImages[index],
+                                        rating: rating,
+                                      ),
+                                    ));
+                              },
+                              child: Container(
+                                height: height * .36,
+                                width: width,
+                                color: Colors.white,
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: height * .2,
+                                      width: width,
+                                      child: Image.asset(
+                                        hotelImages[index],
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.all(width * .04),
+                                      width: width,
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                data.restaurants[index].name,
+                                                style: TextStyle(
+                                                    fontSize: width * .05,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black),
+                                              ),
+                                              Container(
+                                                height: width * .07,
+                                                width: width * .15,
+                                                padding: EdgeInsets.only(
+                                                    left: width * .02,
+                                                    right: width * .02),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          width * .06),
+                                                  color: Colors.green,
+                                                ),
+                                                child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        ratingsList[index]
+                                                            .toStringAsFixed(1),
+                                                        style: TextStyle(
+                                                            fontSize:
+                                                                width * .04,
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
+                                                      ),
+                                                      Icon(
+                                                        Icons.star,
+                                                        color: Colors.white,
+                                                        size: width * .04,
+                                                      )
+                                                    ]),
+                                              )
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: width * .04,
+                                          ),
+                                          Row(
+                                            children: [
+                                              CircleAvatar(
+                                                  backgroundColor: Colors.grey,
+                                                  foregroundColor: Colors.white,
+                                                  radius: width * .03,
+                                                  child: Icon(
+                                                    Icons
+                                                        .restaurant_menu_rounded,
+                                                    size: width * .04,
+                                                  )),
+                                              SizedBox(
+                                                width: width * .02,
+                                              ),
+                                              Text(
+                                                data.restaurants[index]
+                                                    .cuisineType,
+                                                style: TextStyle(
+                                                    fontSize: width * .04),
+                                              )
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: width * .03,
+                                          ),
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                CupertinoIcons.location_solid,
+                                                size: width * .06,
+                                                color: Colors.grey,
+                                              ),
+                                              SizedBox(
+                                                width: width * .02,
+                                              ),
+                                              Text(
+                                                data.restaurants[index].address,
+                                                style: TextStyle(
+                                                    fontSize: width * .04),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                          separatorBuilder: (BuildContext context, int index) {
+                            return SizedBox(
+                              height: width * .03,
+                            );
+                          },
+                        );
+                      },
+                      error: (error, stackTrace) =>
+                          ErrorText(error: error.toString()),
+                      loading: () => const Loader(),
+                    )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
