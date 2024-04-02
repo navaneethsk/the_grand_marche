@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:the_grand_marche/core/constants/colors/palletes.dart';
 import 'package:the_grand_marche/main.dart';
 import 'package:the_grand_marche/model/restaurant_model.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class HotelDetailsScreen extends StatefulWidget {

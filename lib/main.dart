@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:the_grand_marche/core/common/splash_screen.dart';
-import 'package:the_grand_marche/features/login_screen/login_screen.dart';
 
 // ignore: prefer_typing_uninitialized_variables
 var width;
