@@ -95,7 +95,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 ref.watch(fetchRestoProvider).when(
                       data: (data) {
-                        print(data.restaurants.length);
                         return ListView.separated(
                           physics: const BouncingScrollPhysics(),
                           shrinkWrap: true,
@@ -108,15 +107,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   i++) {
                                 totalRating = totalRating +
                                     data.restaurants[i].reviews[i].rating;
-                                print(totalRating);
-                                print(data.restaurants[i].reviews.length);
-
-                                print(rating);
                               }
                               rating = totalRating /
                                   data.restaurants[j].reviews.length;
                               ratingsList.add(rating);
-                              print(ratingsList);
                             }
 
                             return InkWell(

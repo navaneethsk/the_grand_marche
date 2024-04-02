@@ -18,12 +18,13 @@ class _SplashScreenState extends State<SplashScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     loggedIn = prefs.getBool('login') ?? false;
     Future.delayed(const Duration(seconds: 3)).then((value) {
-      Navigator.push(
+      Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (context) =>
                 loggedIn == false ? const LoginScreen() : const HomeScreen(),
-          ));
+          ),
+          (route) => false);
     });
   }
 

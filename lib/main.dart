@@ -1,6 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:the_grand_marche/core/common/splash_screen.dart';
+
+import 'firebase_options.dart';
 
 // ignore: prefer_typing_uninitialized_variables
 var width;
@@ -8,7 +11,11 @@ var width;
 var height;
 bool loggedIn = false;
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const ProviderScope(child: MyApp()));
 }
 

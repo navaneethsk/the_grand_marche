@@ -38,12 +38,13 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       floatingActionButton: FloatingActionButton(
+        shape: const CircleBorder(),
         backgroundColor: Pallets.orange,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Icon(
-              Icons.turn_right,
+              Icons.directions,
               color: Colors.white,
               size: width * .05,
             ),
@@ -214,7 +215,7 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
                       //   onChanged: onChanged
                       //   )
                       Text(
-                        "Wednesday : 5:30pm - 12:00am >",
+                        "Wednesday : 5:30pm - 12:00am ",
                         style: TextStyle(fontSize: width * .04),
                       )
                     ],
