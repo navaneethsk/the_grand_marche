@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:the_grand_marche/features/home_screen/screen/home_screen.dart';
+import 'package:the_grand_marche/core/common/splash_screen.dart';
+import 'package:the_grand_marche/features/login_screen/login_screen.dart';
 
+// ignore: prefer_typing_uninitialized_variables
 var width;
+// ignore: prefer_typing_uninitialized_variables
 var height;
+bool loggedIn = false;
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -21,14 +25,10 @@ class MyApp extends StatelessWidget {
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
-      child: MaterialApp(
+      child: const MaterialApp(
         title: 'The Grand Marche',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: const HomeScreen(),
+        home: SplashScreen(),
       ),
     );
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_grand_marche/core/constants/colors/palletes.dart';
 import 'package:the_grand_marche/core/constants/pictures/pictures.dart';
+import 'package:the_grand_marche/features/home_screen/screen/home_screen.dart';
 import 'package:the_grand_marche/main.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,7 +15,23 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  RegExp emailValidation = RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{3,4}$");
   bool check = false;
+  final formkey = GlobalKey<FormState>();
+
+  loginUser() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setBool('login', true);
+    pref.setString('username', emailController.text.trim());
+    pref.setString('password', passwordController.text.trim()).then((value) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+          ),
+          (route) => false);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,95 +48,125 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 SizedBox(
                   height: height * 0.6,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Image.asset(Pictures.loginImage),
-                      SizedBox(
-                        height: width * .03,
-                      ),
-                      Text(
-                        "Log In \nyour account",
-                        style: TextStyle(
-                            fontSize: width * .063,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
-                      ),
-                      TextFormField(
-                        controller: emailController,
-                        decoration: InputDecoration(
-                          hintText: "User Name",
-                          hintStyle: TextStyle(
-                              fontSize: width * .04,
-                              fontWeight: FontWeight.w400),
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(width * .03),
-                              borderSide:
-                                  const BorderSide(color: Pallets.orange)),
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(width * .03),
-                              borderSide:
-                                  const BorderSide(color: Pallets.orange)),
+                  child: Form(
+                    key: formkey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.asset(Pictures.loginImage),
+                        SizedBox(
+                          height: width * .03,
                         ),
-                      ),
-                      TextFormField(
-                        controller: passwordController,
-                        decoration: InputDecoration(
-                          hintText: "Password",
-                          hintStyle: TextStyle(
-                              fontSize: width * .04,
-                              fontWeight: FontWeight.w400),
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(width * .03),
-                              borderSide:
-                                  const BorderSide(color: Pallets.orange)),
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(width * .03),
-                              borderSide:
-                                  const BorderSide(color: Pallets.orange)),
+                        Text(
+                          "Log In \nyour account",
+                          style: TextStyle(
+                              fontSize: width * .063,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Checkbox(
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(width * .01)),
-                                side: BorderSide(width: width * 0.002),
-                                value: check,
-                                onChanged: (value) {
-                                  setState(() {
-                                    check = value!;
-                                  });
-                                },
-                              ),
-                              Text(
-                                "Remember me",
-                                style: TextStyle(
-                                    fontSize: width * .04, color: Colors.black),
-                              )
-                            ],
-                          ),
-                          Text(
-                            "Forgot Password?",
-                            style: TextStyle(
+                        TextFormField(
+                          keyboardType: TextInputType.emailAddress,
+                          controller: emailController,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (value) {
+                            if (!emailValidation.hasMatch(value!)) {
+                              return "Please enter valid email";
+                            } else {
+                              return null;
+                            }
+                          },
+                          decoration: InputDecoration(
+                            hintText: "User Name",
+                            hintStyle: TextStyle(
                                 fontSize: width * .04,
-                                fontWeight: FontWeight.bold,
-                                color: Pallets.blue),
-                          )
-                        ],
-                      )
-                    ],
+                                fontWeight: FontWeight.w400),
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(width * .03),
+                                borderSide:
+                                    const BorderSide(color: Pallets.orange)),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(width * .03),
+                                borderSide:
+                                    const BorderSide(color: Pallets.orange)),
+                          ),
+                        ),
+                        TextFormField(
+                          controller: passwordController,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (value) {
+                            if (passwordController.text.trim().length < 8 ||
+                                passwordController.text.trim() == '') {
+                              return "Please Enter Password with 8 characters";
+                            } else {
+                              return null;
+                            }
+                          },
+                          decoration: InputDecoration(
+                            hintText: "Password",
+                            hintStyle: TextStyle(
+                                fontSize: width * .04,
+                                fontWeight: FontWeight.w400),
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(width * .03),
+                                borderSide:
+                                    const BorderSide(color: Pallets.orange)),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(width * .03),
+                                borderSide:
+                                    const BorderSide(color: Pallets.orange)),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Checkbox(
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(width * .01)),
+                                  side: BorderSide(width: width * 0.002),
+                                  value: check,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      check = value!;
+                                    });
+                                  },
+                                ),
+                                Text(
+                                  "Remember me",
+                                  style: TextStyle(
+                                      fontSize: width * .04,
+                                      color: Colors.black),
+                                )
+                              ],
+                            ),
+                            Text(
+                              "Forgot Password?",
+                              style: TextStyle(
+                                  fontSize: width * .04,
+                                  fontWeight: FontWeight.bold,
+                                  color: Pallets.blue),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    if (formkey.currentState!.validate()) {
+                      loginUser();
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(width, width * 0.13),
                     shape: RoundedRectangleBorder(

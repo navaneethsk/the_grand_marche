@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:the_grand_marche/core/constants/colors/palletes.dart';
 import 'package:the_grand_marche/main.dart';
 import 'package:the_grand_marche/model/restaurant_model.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class HotelDetailsScreen extends StatefulWidget {
   final Restaurant restaurant;
@@ -20,11 +22,22 @@ class HotelDetailsScreen extends StatefulWidget {
 
 class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
   bool _isExpanded = false;
+  int selectedIndex = 0;
   List openingHours = [];
+  Future<void> openMap(double latitude, double longitude) async {
+    String googleUrl =
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    if (await canLaunchUrlString(googleUrl)) {
+      await launchUrlString(googleUrl);
+    } else {
+      throw 'Could not launch $googleUrl';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Pallets.orange,
         child: Column(
@@ -44,7 +57,9 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
             )
           ],
         ),
-        onPressed: () {},
+        onPressed: () {
+          openMap(widget.restaurant.latlng.lat, widget.restaurant.latlng.lng);
+        },
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -212,7 +227,7 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
               height: width * 0.06,
             ),
             Padding(
-              padding: EdgeInsets.all(width * .03),
+              padding: EdgeInsets.only(top: width * .03, left: width * .03),
               child: Text(
                 "Ratings & Reviews",
                 style: TextStyle(
@@ -225,10 +240,13 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
               physics: const BouncingScrollPhysics(),
               itemBuilder: (context, index) {
                 return Container(
-                  height: height * .15,
+                  height: selectedIndex == index && _isExpanded
+                      ? height * .3
+                      : height * .18,
                   width: width,
                   padding: EdgeInsets.all(width * .02),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Row(
                         children: [
@@ -269,30 +287,46 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
                           )
                         ],
                       ),
-                      _isExpanded
+                      selectedIndex == index && _isExpanded
                           ? Text(
                               widget.restaurant.reviews[index].comments,
                               textAlign: TextAlign.justify,
                             )
                           : Text(
-                              '${widget.restaurant.reviews[index].comments.substring(0, 174)}...',
+                              '${widget.restaurant.reviews[index].comments.substring(0, 178)}...',
                               textAlign: TextAlign.justify,
                             ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // ignore: prefer_interpolation_to_compose_strings
-                          Text(widget.restaurant.reviews[index].date.name
-                                  .substring(0, 7) +
-                              ' ' +
-                              widget.restaurant.reviews[index].date.name
-                                  .substring(8, 10) +
-                              " " +
-                              widget.restaurant.reviews[index].date.name
-                                  .substring(10)),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                // ignore: prefer_interpolation_to_compose_strings
+                                widget.restaurant.reviews[index].date.name
+                                        .substring(0, 7) +
+                                    ' ' +
+                                    widget.restaurant.reviews[index].date.name
+                                        .substring(8, 10) +
+                                    " " +
+                                    widget.restaurant.reviews[index].date.name
+                                        .substring(10),
+                                style: TextStyle(fontSize: width * .024),
+                              ),
+                            ],
+                          ),
                           InkWell(
+                            onTap: () {
+                              setState(() {});
+                              selectedIndex = index;
+                              _isExpanded = !_isExpanded;
+                            },
                             child: Text(
-                              "Read more",
+                              selectedIndex == index && _isExpanded
+                                  ? "Read less"
+                                  : "Read more",
                               style: TextStyle(
                                   fontSize: width * .03,
                                   decoration: TextDecoration.underline),

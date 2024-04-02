@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:the_grand_marche/core/common/error_text.dart';
 import 'package:the_grand_marche/core/common/loader.dart';
 import 'package:the_grand_marche/core/constants/colors/palletes.dart';
 import 'package:the_grand_marche/core/constants/pictures/pictures.dart';
 import 'package:the_grand_marche/features/details_screen/details_screen.dart';
 import 'package:the_grand_marche/features/home_screen/controller/home_screen_controller.dart';
+import 'package:the_grand_marche/features/login_screen/login_screen.dart';
 import 'package:the_grand_marche/main.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -32,6 +34,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Pictures.restaurant9,
     Pictures.restaurant10,
   ];
+  Future logOut() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.remove('login');
+      prefs.remove('username');
+      prefs.remove('password').then((value) => {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginScreen(),
+                ),
+                (route) => false)
+          });
+    } catch (e) {
+      print("Error during logout $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,17 +64,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           style: TextStyle(fontSize: width * .045, fontWeight: FontWeight.bold),
         ),
         actions: [
-          Row(
-            children: [
-              const Icon(
-                Icons.logout,
-                color: Colors.white,
-              ),
-              Text(
-                "Log out",
-                style: TextStyle(fontSize: width * .04, color: Colors.white),
-              ),
-            ],
+          InkWell(
+            onTap: () => logOut(),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.logout,
+                  color: Colors.white,
+                ),
+                Text(
+                  "Log out",
+                  style: TextStyle(fontSize: width * .04, color: Colors.white),
+                ),
+              ],
+            ),
           ),
           SizedBox(
             width: width * .03,

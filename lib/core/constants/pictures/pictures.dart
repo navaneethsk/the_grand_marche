@@ -1,5 +1,6 @@
 class Pictures {
   static const loginImage = "assets/images/loginimage.png";
+  static const shoppingCart = "assets/images/shoppingcart.png";
   static const restaurant1 = "assets/images/restaurant1.jpeg";
   static const restaurant2 = "assets/images/restaurant2.jpg";
   static const restaurant3 = "assets/images/restaurant3.jpg";

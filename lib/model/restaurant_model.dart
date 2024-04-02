@@ -549,6 +549,7 @@ class Latlng {
       };
 }
 
+// ignore: constant_identifier_names
 enum Neighborhood { BROOKLYN, MANHATTAN, QUEENS }
 
 final neighborhoodValues = EnumValues({
