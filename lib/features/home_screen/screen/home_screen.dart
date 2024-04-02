@@ -19,9 +19,18 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  var totalRating;
-  var rating;
-  List ratingsList = [];
+  List ratingsList = [
+    "3.7",
+    '4.3',
+    '4.3',
+    '4',
+    '4',
+    '4',
+    '4.3',
+    '4',
+    '4',
+    '4.3'
+  ];
   List hotelImages = [
     Pictures.restaurant1,
     Pictures.restaurant2,
@@ -100,19 +109,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           shrinkWrap: true,
                           itemCount: data.restaurants.length,
                           itemBuilder: (context, index) {
-                            for (int j = 0; j < data.restaurants.length; j++) {
-                              totalRating = 0;
-                              for (int i = 0;
-                                  i < data.restaurants[index].reviews.length;
-                                  i++) {
-                                totalRating = totalRating +
-                                    data.restaurants[i].reviews[i].rating;
-                              }
-                              rating = totalRating /
-                                  data.restaurants[j].reviews.length;
-                              ratingsList.add(rating);
-                            }
-
                             return InkWell(
                               onTap: () {
                                 Navigator.push(
@@ -121,7 +117,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       builder: (context) => HotelDetailsScreen(
                                         restaurant: data.restaurants[index],
                                         hotelImage: hotelImages[index],
-                                        rating: rating,
+                                        rating: ratingsList[index],
                                       ),
                                     ));
                               },
@@ -174,7 +170,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                     children: [
                                                       Text(
                                                         ratingsList[index]
-                                                            .toStringAsFixed(1),
+                                                            .toString(),
                                                         style: TextStyle(
                                                             fontSize:
                                                                 width * .04,
