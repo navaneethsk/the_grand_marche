@@ -8,7 +8,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 class HotelDetailsScreen extends StatefulWidget {
   final Restaurant restaurant;
   final String hotelImage;
-  final double rating;
+  final String rating;
   const HotelDetailsScreen(
       {super.key,
       required this.restaurant,
@@ -33,10 +33,11 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
     }
   }
 
+  List<String> openingHours = [];
+  var dropDownValue = '';
   @override
-  Widget build(BuildContext context) {
-    var dropDownValue;
-    List openingHours = [
+  void initState() {
+    openingHours = [
       "Monday: ${widget.restaurant.operatingHours.monday}",
       "Tuesday: ${widget.restaurant.operatingHours.tuesday}",
       "Wednesday: ${widget.restaurant.operatingHours.wednesday}",
@@ -45,6 +46,13 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
       "Saturday: ${widget.restaurant.operatingHours.saturday}",
       "Sunday: ${widget.restaurant.operatingHours.sunday}",
     ];
+    dropDownValue = openingHours[0];
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       floatingActionButton: FloatingActionButton(
@@ -142,7 +150,7 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                widget.rating.toStringAsFixed(1),
+                                widget.rating,
                                 style: TextStyle(
                                     fontSize: width * .04,
                                     color: Colors.white,
@@ -216,22 +224,25 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
                       SizedBox(
                         width: width * .02,
                       ),
-                      DropdownButton(
-                        isExpanded: true,
-                        value: dropDownValue,
-                        items: openingHours.map((value) {
-                          return DropdownMenuItem(
-                              value: value,
-                              child: Text(
-                                value,
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: width * .04),
-                              ));
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {});
-                          dropDownValue = value;
-                        },
+                      SizedBox(
+                        width: width * .8,
+                        height: width * .1,
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          underline: SizedBox(),
+                          value: dropDownValue,
+                          items: openingHours.map((value) {
+                            return DropdownMenuItem(
+                                value: value,
+                                child: Text(
+                                  value,
+                                ));
+                          }).toList(),
+                          onChanged: (value) {
+                            dropDownValue = value!;
+                            setState(() {});
+                          },
+                        ),
                       )
                       // Text(
                       //   "Wednesday : 5:30pm - 12:00am ",
@@ -258,6 +269,7 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
               itemBuilder: (context, index) {
+                print(widget.restaurant.reviews.length);
                 return Container(
                   height: selectedIndex == index && _isExpanded
                       ? height * .3
@@ -306,15 +318,20 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
                           )
                         ],
                       ),
-                      selectedIndex == index && _isExpanded
+                      widget.restaurant.reviews[index].comments.length < 178
                           ? Text(
                               widget.restaurant.reviews[index].comments,
                               textAlign: TextAlign.justify,
                             )
-                          : Text(
-                              '${widget.restaurant.reviews[index].comments.substring(0, 178)}...',
-                              textAlign: TextAlign.justify,
-                            ),
+                          : selectedIndex == index && _isExpanded
+                              ? Text(
+                                  widget.restaurant.reviews[index].comments,
+                                  textAlign: TextAlign.justify,
+                                )
+                              : Text(
+                                  '${widget.restaurant.reviews[index].comments.substring(0, 178)}...',
+                                  textAlign: TextAlign.justify,
+                                ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -343,9 +360,12 @@ class _HotelDetailsScreenState extends State<HotelDetailsScreen> {
                               _isExpanded = !_isExpanded;
                             },
                             child: Text(
-                              selectedIndex == index && _isExpanded
-                                  ? "Read less"
-                                  : "Read more",
+                              widget.restaurant.reviews[index].comments.length <
+                                      178
+                                  ? ""
+                                  : selectedIndex == index && _isExpanded
+                                      ? "Read less"
+                                      : "Read more",
                               style: TextStyle(
                                   fontSize: width * .03,
                                   decoration: TextDecoration.underline),
